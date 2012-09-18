@@ -33,6 +33,7 @@ public class UploadURL extends Thread {
 			OutputStream output = null;
 			output = connection.getOutputStream();
 			OUT.writeTo(output);
+			connection.setConnectTimeout(20000); // 20s timeout
 			connection.connect();
 			if (output != null) try { output.close(); } catch (IOException e){}
 			if (((HttpURLConnection) connection).getResponseCode() == 200){
