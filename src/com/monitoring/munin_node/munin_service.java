@@ -38,7 +38,7 @@ public class munin_service extends Service{
 		NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
 		mNotificationManager.cancel(MUNIN_NOTIFICATION);
     }
-    
+
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
@@ -50,13 +50,15 @@ public class munin_service extends Service{
         editor.putLong("new_start_time", when);
         editor.commit();
 
-        final NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);        
+        final NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		Notification notification = new Notification(R.drawable.notification, "Munin Node Started", when);
 		Context context = getApplicationContext();
-		PendingIntent contentIntent = PendingIntent.getActivity(this, 0,  new Intent(this, munin_node.class), 0);
-		notification.setLatestEventInfo(context, "Munin Node", "Just letting you know I am running", contentIntent);
-		notification.flags |= Notification.FLAG_NO_CLEAR;
-		mNotificationManager.notify(MUNIN_NOTIFICATION, notification);
+		if (settings.getBoolean("notification", false) == true) {
+			PendingIntent contentIntent = PendingIntent.getActivity(this, 0,  new Intent(this, munin_node.class), 0);
+			notification.setLatestEventInfo(context, "Munin Node", "Just letting you know I am running", contentIntent);
+			notification.flags |= Notification.FLAG_NO_CLEAR;
+			mNotificationManager.notify(MUNIN_NOTIFICATION, notification);
+		}
 		class Count{
 			int ran = 0;
 			int done = 0;
@@ -125,7 +127,6 @@ public class munin_service extends Service{
 			        editor.putLong("end_time", System.currentTimeMillis()).commit();
 			        System.gc();
 			        wakeLock.release();
-					
 				}
 			}
 		};
@@ -201,5 +202,4 @@ public class munin_service extends Service{
 		return null;
 	}
 
-    
 }

@@ -75,11 +75,27 @@
 			android:layout_toRightOf="@+id/textView4"
 			/>
 		<TextView
+			android:id="@+id/textView5"
+			android:text="Show notification"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@+id/onBoot"
+			android:layout_marginTop="10dp"
+			/>
+		<CheckBox
+			android:id="@+id/notification"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@+id/onBoot"
+			android:layout_marginLeft="20dip"
+			android:layout_toRightOf="@+id/textView4"
+			/>
+		<TextView
 			android:id="@+id/ANDROID_ID"
 			android:text="Android ID:"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_below="@+id/textView4"
+			android:layout_below="@+id/notification"
 			android:layout_marginTop="10dp"
 			/>
 	</RelativeLayout>

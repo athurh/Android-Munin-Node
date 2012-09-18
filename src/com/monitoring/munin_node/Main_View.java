@@ -106,12 +106,12 @@ public class Main_View extends Activity{
     				toast.setGravity(Gravity.BOTTOM, -30, 50);
     				toast.show();
     			}
-        		}   
+        		}
         	});
         CheckBox onboot = (CheckBox) findViewById(R.id.onBoot);
         onboot.setChecked(settings.getBoolean("onBoot", false));
         onboot.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-			
+
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 		        SharedPreferences.Editor editor = settings.edit();
@@ -119,8 +119,19 @@ public class Main_View extends Activity{
 		        editor.commit();
 			}
 		});
+	CheckBox notification = (CheckBox) findViewById(R.id.notification);
+	notification.setChecked(settings.getBoolean("notification", false));
+	notification.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			SharedPreferences.Editor editor = settings.edit();
+			editor.putBoolean("notification", isChecked);
+			editor.commit();
+			}
+		});
     }
-        
+
     public class MyOnItemSelectedListener implements OnItemSelectedListener {
 
         public void onItemSelected(AdapterView<?> parent,View view, int pos, long id) {
