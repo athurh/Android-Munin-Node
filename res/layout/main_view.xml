@@ -1,15 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-	<ScrollView  android:id="@+id/scrollView1" android:fillViewport="true" android:layout_width="fill_parent" android:layout_height="wrap_content" xmlns:android="http://schemas.android.com/apk/res/android">
-    	<RelativeLayout android:id="@+id/relativeLayout1" android:layout_width="fill_parent" android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android">
-	        <TextView android:id="@+id/textView1" android:layout_width="wrap_content" android:text="Server:" android:layout_height="wrap_content"></TextView>
-        	<EditText android:layout_width="fill_parent" android:id="@+id/Server" android:text="Server" android:layout_height="wrap_content" android:layout_below="@+id/textView1"></EditText>
-        	<TextView android:id="@+id/textView2" android:layout_width="wrap_content" android:text="Update Interval:" android:layout_height="wrap_content" android:layout_below="@+id/Server" android:layout_marginTop="15dp"></TextView>
-        	<Spinner android:id="@+id/spinner1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_below="@+id/Server" android:layout_toRightOf="@+id/textView2"  android:prompt="@string/time_prompt"></Spinner>
-    	    <TextView android:id="@+id/textView3" android:layout_width="wrap_content" android:text="Minutes" android:layout_height="wrap_content" android:layout_toRightOf="@+id/spinner1" android:layout_below="@+id/Server" android:layout_marginTop="15dp"></TextView>
-        	<TextView android:id="@+id/textView4" android:layout_width="wrap_content" android:text="Start Service On Boot" android:layout_height="wrap_content" android:layout_below="@+id/spinner1" android:layout_marginTop="15dp"></TextView>
-        	<CheckBox android:layout_width="wrap_content" android:text="" android:layout_height="wrap_content" android:id="@+id/onBoot" android:layout_below="@+id/spinner1" android:layout_toRightOf="@+id/textView4"></CheckBox>
-        	<Button android:layout_width="wrap_content" android:id="@+id/Save1" android:layout_height="wrap_content" android:text="Save" android:layout_below="@+id/onBoot"></Button>
-        	<TextView android:id="@+id/ANDROID_ID" android:layout_width="wrap_content" android:text="Android ID:" android:layout_height="wrap_content" android:layout_below="@+id/Save1" android:layout_marginTop="20dp"></TextView>
-        	
-    	</RelativeLayout>
-	</ScrollView>
+<ScrollView
+	android:id="@+id/scrollView1"
+	android:fillViewport="true"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	xmlns:android="http://schemas.android.com/apk/res/android">
+	<RelativeLayout
+		android:id="@+id/relativeLayout1"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		xmlns:android="http://schemas.android.com/apk/res/android">
+		<TextView
+			android:id="@+id/textView1"
+			android:text="Server:"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="10dp"
+			/>
+		<EditText
+			android:id="@+id/Server"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_below="@+id/textView1"
+			android:layout_marginBottom="15dp"
+			/>
+		<TextView
+			android:id="@+id/textView2"
+			android:text="Update interval (minutes)"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@+id/Server"
+			android:layout_marginTop="8dp"
+			/>
+		<Spinner
+			android:id="@+id/spinner1"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@+id/Server"
+			android:layout_marginLeft="20dip"
+			android:layout_toRightOf="@+id/textView2"
+			android:prompt="@string/time_prompt"
+			/>
+		<Button
+			android:id="@+id/Save1"
+			android:text="Save"
+			android:layout_width="96dp"
+			android:layout_height="wrap_content"
+			android:layout_below="@+id/spinner1"
+			android:layout_marginTop="10dp"
+			/>
+		<View
+			android:id="@+id/line1"
+			android:layout_width="match_parent"
+			android:layout_height="1dp"
+			android:layout_below="@+id/Save1"
+			android:layout_marginTop="15dp"
+			android:layout_marginBottom="10dp"
+			android:background="@android:color/holo_blue_dark"
+			/>
+		<TextView
+			android:id="@+id/textView4"
+			android:text="Start service on boot"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@+id/line1"
+			android:layout_marginTop="10dp"
+			/>
+		<CheckBox
+			android:id="@+id/onBoot"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@+id/line1"
+			android:layout_marginLeft="20dip"
+			android:layout_toRightOf="@+id/textView4"
+			/>
+		<TextView
+			android:id="@+id/ANDROID_ID"
+			android:text="Android ID:"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@+id/textView4"
+			android:layout_marginTop="10dp"
+			/>
+	</RelativeLayout>
+</ScrollView>
