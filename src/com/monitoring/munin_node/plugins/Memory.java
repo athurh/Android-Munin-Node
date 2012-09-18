@@ -80,9 +80,9 @@ public class Memory implements Plugin_API{
 		if (meminfo.containsKey("VmallocUsed")){
 			output.append("vmalloc_used.label vmalloc_used\nvmalloc_used.draw LINE2\nvmalloc_used.info 'VMalloc' (kernel) memory used\n");
 		}
-		if (meminfo.containsKey("Committed_AS")) {
-			output.append("committed.label committed\ncommitted.draw LINE2\ncommitted.info The amount of memory allocated to programs. Overcommitting is normal, but may indicate memory leaks.\n");
-		}
+//		if (meminfo.containsKey("Committed_AS")) {
+//			output.append("committed.label committed\ncommitted.draw LINE2\ncommitted.info The amount of memory allocated to programs. Overcommitting is normal, but may indicate memory leaks.\n");
+//		}
 		if (meminfo.containsKey("Mapped")) {
 			output.append("mapped.label mapped\nmapped.draw LINE2\nmapped.info All mmap()ed pages.\n");
 		}
@@ -145,9 +145,9 @@ public class Memory implements Plugin_API{
 		output2.append("buffers.value "+meminfo.get("Buffers")+"\n");
 		output2.append("cached.value "+meminfo.get("Cached")+"\n");
 		output2.append("swap.value "+((Long.parseLong(meminfo.get("SwapTotal")))-(Long.parseLong(meminfo.get("SwapFree")))));
-		if (meminfo.containsKey("Committed_AS")) {
-			output2.append("\ncommitted.value "+meminfo.get("Committed_AS"));
-		}
+//		if (meminfo.containsKey("Committed_AS")) {
+//			output2.append("\ncommitted.value "+meminfo.get("Committed_AS"));
+//		}
 		if (meminfo.containsKey("Mapped")) {
 			output2.append("\nmapped.value "+meminfo.get("Mapped"));
 		}
