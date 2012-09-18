@@ -25,18 +25,32 @@
 			android:layout_marginBottom="15dp"
 			/>
 		<TextView
+			android:id="@+id/textView1W"
+			android:text="Server (WiFi):"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@+id/Server"
+			/>
+		<EditText
+			android:id="@+id/ServerW"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_below="@+id/textView1W"
+			android:layout_marginBottom="10dp"
+			/>
+		<TextView
 			android:id="@+id/textView2"
 			android:text="Update interval (minutes)"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_below="@+id/Server"
+			android:layout_below="@+id/ServerW"
 			android:layout_marginTop="8dp"
 			/>
 		<Spinner
 			android:id="@+id/spinner1"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_below="@+id/Server"
+			android:layout_below="@+id/ServerW"
 			android:layout_marginLeft="20dip"
 			android:layout_toRightOf="@+id/textView2"
 			android:prompt="@string/time_prompt"

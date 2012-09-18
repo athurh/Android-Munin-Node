@@ -16,6 +16,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Debug;
 import android.os.Handler;
@@ -88,6 +90,9 @@ public class munin_service extends Service{
 			@Override
 			public void handleMessage(Message msg){
 				super.handleMessage(msg);
+				ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+				NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+				final Boolean mWifiConnected = mWifi.isConnected();
 				if(msg.what == 42){
 					Bundle bundle = (Bundle)msg.obj;
 					Plugins.Plugin.Builder plugin = Plugins.Plugin.newBuilder();
@@ -108,7 +113,12 @@ public class munin_service extends Service{
 							ErrorReporter.getInstance().handleException(e);
 						}
 			            editor.putLong("new_plugin_end_time", System.currentTimeMillis());
-						String Server = settings.getString("Server", "Server");
+						String Server;
+						if (mWifiConnected) {
+							Server = settings.getString("ServerW", "");
+						} else {
+							Server = settings.getString("Server", "");
+						}
 						Server = Server+Secure.getString(getBaseContext().getContentResolver(), Secure.ANDROID_ID);
 			            editor.putLong("new_upload_start_time", System.currentTimeMillis()).commit();
 						new UploadURL(this,Server,out).start();
