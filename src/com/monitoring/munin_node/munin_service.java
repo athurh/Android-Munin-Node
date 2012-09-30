@@ -18,6 +18,8 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
+import android.net.wifi.WifiInfo;
 import android.os.Bundle;
 import android.os.Debug;
 import android.os.Handler;
@@ -90,10 +92,14 @@ public class munin_service extends Service{
 			@Override
 			public void handleMessage(Message msg){
 				super.handleMessage(msg);
-				ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-				NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-				final Boolean mWifiConnected = mWifi.isConnected();
 				if(msg.what == 42){
+					ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+					NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+					WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
+					WifiInfo mWifiInfo = wifiManager.getConnectionInfo();
+					final Boolean mWifiConnected = mWifi.isConnected();
+					final String mWifiSSID = mWifiInfo.getSSID();
+					final String ssid = settings.getString("ssid", "");
 					Bundle bundle = (Bundle)msg.obj;
 					Plugins.Plugin.Builder plugin = Plugins.Plugin.newBuilder();
 					plugin.setName(bundle.getString("name")).setConfig(bundle.getString("config")).setUpdate(bundle.getString("update"));
@@ -114,7 +120,7 @@ public class munin_service extends Service{
 						}
 			            editor.putLong("new_plugin_end_time", System.currentTimeMillis());
 						String Server;
-						if (mWifiConnected) {
+						if (mWifiConnected && mWifiSSID.equals(ssid)) {
 							Server = settings.getString("ServerW", "");
 						} else {
 							Server = settings.getString("Server", "");

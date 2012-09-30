@@ -7,6 +7,8 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
+import android.net.wifi.WifiInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -30,11 +32,13 @@ public class Main_View extends Activity{
 	public String Update_Interval_New = null;
 	public String Server = null;
 	public String ServerW = null;
+	public String ssid = null;
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         final SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         Server = settings.getString("Server", "http://");
         ServerW = settings.getString("ServerW", "");
+        ssid = settings.getString("ssid", "");
         Update_Interval = settings.getString("Update_Interval", "10");
         setContentView(R.layout.main_view);
         Spinner spinner = (Spinner) findViewById(R.id.spinner1);
@@ -44,11 +48,13 @@ public class Main_View extends Activity{
         spinner.setOnItemSelectedListener(new MyOnItemSelectedListener());
         final EditText server_text = (EditText) findViewById(R.id.Server);
         final EditText serverw_text = (EditText) findViewById(R.id.ServerW);
+        final EditText ssid_text = (EditText) findViewById(R.id.ssid);
         final TextView android_id = (TextView) findViewById(R.id.ANDROID_ID);
         android_id.setText("Android ID: "+Secure.getString(getBaseContext().getContentResolver(), Secure.ANDROID_ID));
         final Button save = (Button) findViewById(R.id.Save1);
         server_text.setText(Server);
         serverw_text.setText(ServerW);
+        ssid_text.setText(ssid);
         System.out.println(Server);
         System.out.println(ServerW);
         System.out.println(Update_Interval);
@@ -81,9 +87,16 @@ public class Main_View extends Activity{
     			Pattern URL = Pattern.compile("http\\:\\/\\/.+\\/$");
 			ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
 			NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+			WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
+			WifiInfo mWifiInfo = wifiManager.getConnectionInfo();
 			final Boolean mWifiConnected = mWifi.isConnected();
+			final String mWifiSSID = mWifiInfo.getSSID();
+			ssid = ssid_text.getText().toString();
 			Matcher match1;
-			if (mWifiConnected) {
+			if (ssid.length() == 0) {
+				ssid = mWifiSSID;
+			}
+			if (mWifiConnected && mWifiSSID.equals(ssid)) {
 				match1 = URL.matcher(serverw_text.getText().toString());
 			} else {
 				match1 = URL.matcher(server_text.getText().toString());
@@ -97,12 +110,14 @@ public class Main_View extends Activity{
     					public void run(){
     						Server = server_text.getText().toString();
 						ServerW = serverw_text.getText().toString();
-						if (ServerW.length() == 0) {
+						if (Server.equals("http://") && ServerW.length() > 0) {
+							Server = ServerW;
+						} else if (ServerW.length() == 0) {
 							ServerW = Server;
 						}
     						Test_Settings test = new Test_Settings();
 						Integer test_value;
-						if (mWifiConnected) {
+						if (mWifiConnected && mWifiSSID.equals(ssid)) {
 							test_value = test.Run_Test(ServerW);
 						} else {
 							test_value = test.Run_Test(Server);
@@ -173,6 +188,7 @@ public class Main_View extends Activity{
         SharedPreferences.Editor editor = settings.edit();
         editor.putString("Server", Server);
         editor.putString("ServerW", ServerW);
+        editor.putString("ssid", ssid);
         editor.putString("Update_Interval", Update_Interval_New);
         editor.commit();
         System.out.println(Server);
