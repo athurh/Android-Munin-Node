@@ -25,6 +25,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
 import android.provider.Settings.Secure;
+import android.util.Log;
 
 import com.monitoring.munin_node.protos.Plugins;
 import com.monitoring.munin_node.plugin_api.LoadPlugins;
@@ -32,7 +33,8 @@ import com.monitoring.munin_node.plugin_api.PluginFactory;
 import com.monitoring.munin_node.plugin_api.Plugin_API;
 
 public class munin_service extends Service{
-	final int MUNIN_NOTIFICATION = 1;
+    private static final String TAG = "MuninNodeService";
+    final int MUNIN_NOTIFICATION = 1;
     List<Plugin_API> plugin_objects;
     @Override
     public void onDestroy() {
@@ -114,31 +116,34 @@ public class munin_service extends Service{
 							gzipped = null;
 							plugins.clear();
 						} catch (IOException e) {
+							Log.w(TAG, "I/O error");
 						}
-			            editor.putLong("new_plugin_end_time", System.currentTimeMillis());
+						editor.putLong("new_plugin_end_time", System.currentTimeMillis());
 						String Server;
 						if (mWifiConnected && mWifiSSID.equals(ssid)) {
 							Server = settings.getString("ServerW", "");
 						} else {
 							Server = settings.getString("Server", "");
 						}
+						Log.d(TAG, "uploading to " + Server);
 						Server = Server+Secure.getString(getBaseContext().getContentResolver(), Secure.ANDROID_ID);
-			            editor.putLong("new_upload_start_time", System.currentTimeMillis()).commit();
+						editor.putLong("new_upload_start_time", System.currentTimeMillis()).commit();
 						new UploadURL(this,Server,out).start();
 						try {
 							out.close();
 							out = null;
 						} catch (IOException e) {
+							Log.w(TAG, "I/O error");
 						}
 					}
 				}
 				else if (msg.what == 43){
-		            editor.putLong("new_upload_end_time", System.currentTimeMillis()).commit();
-					System.out.println("Upload Finished");
+					editor.putLong("new_upload_end_time", System.currentTimeMillis()).commit();
+					Log.d(TAG, "Upload finished");
 					mNotificationManager.cancel(MUNIN_NOTIFICATION);//Cancel Notification that the "service" is running
-			        editor.putLong("end_time", System.currentTimeMillis()).commit();
-			        System.gc();
-			        wakeLock.release();
+					editor.putLong("end_time", System.currentTimeMillis()).commit();
+					System.gc();
+					wakeLock.release();
 				}
 			}
 		};

@@ -12,10 +12,12 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import com.monitoring.munin_node.plugin_api.Plugin_API;
 
 public class irqstats implements Plugin_API {
+	private static final String TAG = "MuninNodePlugin";
 	Map<String, String[]> irqinfo = new HashMap<String, String[]>();
 
 	@Override
@@ -64,7 +66,7 @@ public class irqstats implements Plugin_API {
 				if(line_matcher.find()){
 					if(cpu_count > 1){
 						//TODO handle multiple cpus
-						System.out.println("This Should be handled eventually");
+						Log.d(TAG, "Multiple cpus should be handled eventually");
 					}
 					String[] temp = {line_matcher.group(2),line_matcher.group(3)};
 					irqinfo.put(line_matcher.group(1), temp);

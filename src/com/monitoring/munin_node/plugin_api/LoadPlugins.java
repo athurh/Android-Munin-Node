@@ -10,9 +10,11 @@ import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
+import android.util.Log;
 
 public class LoadPlugins {
-	List<Plugin_API> plugins = new ArrayList<Plugin_API>();
+    private static final String TAG = "MuninNodeLoadPlugins";
+    List<Plugin_API> plugins = new ArrayList<Plugin_API>();
     List<String> plugin_names = new ArrayList<String>();
     String[] catarray = {};
     String[][] childcatarray = {{}};
@@ -42,10 +44,10 @@ public class LoadPlugins {
         return plugin_names;
 	}
 	public void genCats(){
-		System.out.println("getting cats");
+		Log.d(TAG, "Getting categories");
 		Map<String, String[]> Cats = new HashMap<String, String[]>();
 		for(Plugin_API p : plugins){
-			System.out.println("CAT:"+p.getCat()+" Name:"+p.getName());
+			Log.d(TAG, "category=" + p.getCat() + " name=" + p.getName());
 			if(Cats.containsKey(p.getCat())){
 				String[] plugs = Cats.get(p.getCat());
 				String[] temp = new String[plugs.length+1];
@@ -56,7 +58,6 @@ public class LoadPlugins {
 			else{
 				String[] temp = {p.getName()};
 				Cats.put(p.getCat(), temp);
-				System.out.println(p.getCat());
 			}
 		}
 		for (Map.Entry<String, String[]> entry : Cats.entrySet())
@@ -71,7 +72,7 @@ public class LoadPlugins {
 			temp1[catarray.length-1] = childtemp;
 			childcatarray = temp1;
 		}
-		System.out.println("Done Eating Cats");
+		Log.d(TAG, "Done");
 	}
 	public String[] getCats(){
 		return catarray;
