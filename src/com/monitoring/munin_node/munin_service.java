@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPOutputStream;
 
-import org.acra.ErrorReporter;
-
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -116,7 +114,6 @@ public class munin_service extends Service{
 							gzipped = null;
 							plugins.clear();
 						} catch (IOException e) {
-							ErrorReporter.getInstance().handleException(e);
 						}
 			            editor.putLong("new_plugin_end_time", System.currentTimeMillis());
 						String Server;
@@ -132,7 +129,6 @@ public class munin_service extends Service{
 							out.close();
 							out = null;
 						} catch (IOException e) {
-							ErrorReporter.getInstance().handleException(e);
 						}
 					}
 				}
