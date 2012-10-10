@@ -33,7 +33,7 @@ public class munin_time implements Plugin_API {
         editor.putLong("start_time", settings.getLong("new_start_time", 0));
         editor.commit();
         Long processing_time = end-start;
-		StringBuffer output = new StringBuffer();
+		StringBuilder output = new StringBuilder();
 		output.append("graph_title Munin Processing Time\n");
 		output.append("graph_vlabel ms\n");
 		output.append("graph_info This graph shows how much time is spent running the munin service, its data is delayed by one run.\n");
@@ -51,7 +51,7 @@ public class munin_time implements Plugin_API {
 		Bundle bundle = new Bundle();
 		bundle.putString("name", this.getName());
 		bundle.putString("config", output.toString());
-		StringBuffer update = new StringBuffer();
+		StringBuilder update = new StringBuilder();
 		if(processing_time < 0){
 			update.append("time.value U\n");
 		}

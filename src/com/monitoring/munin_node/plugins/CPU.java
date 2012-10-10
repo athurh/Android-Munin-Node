@@ -57,7 +57,7 @@ public class CPU implements Plugin_API{
 		while (match2.find()) {
 			extextinfo = true;
 		}
-		StringBuffer output = new StringBuffer();
+		StringBuilder output = new StringBuilder();
 		Pattern cpunumber_regex = Pattern.compile("cpu[0-9]+");
 		Matcher match = cpunumber_regex.matcher(cpu);
 		int NCPU = 0;
@@ -116,7 +116,7 @@ public class CPU implements Plugin_API{
 			output.append("steal.info The time that a virtual CPU had runnable tasks, but the virtual CPU itself was not running");
 		}
 
-		StringBuffer output2 = new StringBuffer();
+		StringBuilder output2 = new StringBuilder();
 		Pattern split_regex = Pattern.compile("\\s+");
 		String[] items = split_regex.split(cpu);
         final SharedPreferences settings = context.getSharedPreferences("Munin_Node.CPU", 0);

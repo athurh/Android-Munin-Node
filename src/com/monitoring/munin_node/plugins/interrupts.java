@@ -39,7 +39,7 @@ public class interrupts implements Plugin_API {
 
 	@Override
 	public Void run(Handler handler) {
-		StringBuffer output = new StringBuffer();
+		StringBuilder output = new StringBuilder();
 		output.append("graph_title Interrupts and context switches\n");
 		output.append("graph_args --base 1000 -l 0\n");
 		output.append("graph_vlabel interrupts & ctx switches / ${graph_period}\n");
@@ -56,7 +56,7 @@ public class interrupts implements Plugin_API {
 		output.append("intr.min 0\n");
 		output.append("ctx.min 0");
 		BufferedReader in = null;
-		StringBuffer statbuffer = new StringBuffer();
+		StringBuilder statbuffer = new StringBuilder();
 		try {
 			in = new BufferedReader(new FileReader("/proc/stat"));
 			String str;

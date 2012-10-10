@@ -55,7 +55,7 @@ public class irqstats implements Plugin_API {
 			while (cpu_matcher.find()){
 				cpu_count++;
 			}
-			StringBuffer pattern = new StringBuffer();
+			StringBuilder pattern = new StringBuilder();
 			pattern.append("([\\w\\d]+):[\\s]+");
 			for(int i = 0;i < cpu_count;i++){
 				pattern.append("([\\d]+)[\\s]+");
@@ -80,7 +80,7 @@ public class irqstats implements Plugin_API {
 					in.close();
 			} catch (IOException e) {}
 		}
-		StringBuffer output = new StringBuffer();
+		StringBuilder output = new StringBuilder();
 		output.append("graph_title Individual interrupts\n");
 		output.append("graph_args --base 1000 -l 0\ngraph_vlabel interrupts / ${graph_period}\ngraph_category system\n");
 		//TODO Fix Graph order
@@ -90,7 +90,7 @@ public class irqstats implements Plugin_API {
 			output.append("\ni"+entry.getKey()+".type DERIVE");
 			output.append("\ni"+entry.getKey()+".min 0\n");
 		}
-		StringBuffer output2 = new StringBuffer();
+		StringBuilder output2 = new StringBuilder();
 		for (Map.Entry<String, String[]> entry : irqinfo.entrySet()) {
 			output2.append("\ni"+entry.getKey()+".value "+entry.getValue()[0]);
 		}

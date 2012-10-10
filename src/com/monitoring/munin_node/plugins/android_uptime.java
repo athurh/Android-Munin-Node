@@ -33,7 +33,7 @@ public class android_uptime implements Plugin_API{
 
 	@Override
 	public Void run(Handler service_Handler) {
-		StringBuffer output = new StringBuffer();
+		StringBuilder output = new StringBuilder();
 		output.append("graph_title Android Uptime\n");
 		output.append("graph_args --base 1000 -l 0\n");
 		output.append("graph_scale no\n");

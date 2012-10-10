@@ -31,7 +31,7 @@ public class battery implements Plugin_API {
 	
 	@Override
 	public Void run(Handler handler) {
-		StringBuffer output = new StringBuffer();
+		StringBuilder output = new StringBuilder();
 		output.append("graph_title Battery Charge\n");
 		output.append("graph_args --upper-limit 100 -l 0\n");
 		output.append("graph_scale no\n");
@@ -52,7 +52,7 @@ public class battery implements Plugin_API {
 		output.append("graph_category Android Phone\n");
 		output.append("graph_info This graph shows battery Voltage\n");
 		output.append("volt.label Battery Voltage");
-		StringBuffer output2 = new StringBuffer();
+		StringBuilder output2 = new StringBuilder();
 		Intent Battery = context.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 		Float Battery_unscaled = new Float(Battery.getIntExtra("level", 0));
 		Float Battery_scale = new Float(Battery.getIntExtra("scale", 0));

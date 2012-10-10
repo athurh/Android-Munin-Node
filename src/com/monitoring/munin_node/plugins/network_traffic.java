@@ -43,10 +43,10 @@ public class network_traffic implements Plugin_API {
 
 	@Override
 	public Void run(Handler handler) {
-		StringBuffer transconfig = new StringBuffer();
-		StringBuffer errorconfig = new StringBuffer();
-		StringBuffer transvalue = new StringBuffer();
-		StringBuffer errorvalue = new StringBuffer();
+		StringBuilder transconfig = new StringBuilder();
+		StringBuilder errorconfig = new StringBuilder();
+		StringBuilder transvalue = new StringBuilder();
+		StringBuilder errorvalue = new StringBuilder();
 		transconfig.append("graph_order down up\n"); 
 		transconfig.append("graph_title Network traffic\n");
 		transconfig.append("graph_args --base 1000\n");

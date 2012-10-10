@@ -72,7 +72,7 @@ public class cell_signal implements Plugin_API {
 					} 
 				} 
 				super.onSignalStrengthsChanged(signalStrength);
-				StringBuffer output = new StringBuffer();
+				StringBuilder output = new StringBuilder();
 				output.append("graph_title Signal Stregth \n");
 				output.append("graph_args --upper-limit 31 -l 0\n");
 				output.append("graph_scale no\n");

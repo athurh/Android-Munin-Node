@@ -45,7 +45,7 @@ public class forks implements Plugin_API {
 
 	@Override
 	public Void run(Handler handler) {
-		StringBuffer output = new StringBuffer();
+		StringBuilder output = new StringBuilder();
 		output.append("graph_title Fork rate\n");
 		output.append("graph_args --base 1000 -l 0 \n");
 		output.append("graph_vlabel forks / ${graph_period}\n");
@@ -57,7 +57,7 @@ public class forks implements Plugin_API {
 		output.append("forks.max 100000\n");
 		output.append("forks.info The number of forks per second.");
 		BufferedReader in = null;
-		StringBuffer statbuffer = new StringBuffer();
+		StringBuilder statbuffer = new StringBuilder();
 		try {
 			in = new BufferedReader(new FileReader("/proc/stat"));
 			String str;

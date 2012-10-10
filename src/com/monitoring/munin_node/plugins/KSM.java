@@ -34,7 +34,7 @@ public class KSM implements Plugin_API{
 	@Override
 	public Void run(Handler handler) {
 
-		StringBuffer output = new StringBuffer();
+		StringBuilder output = new StringBuilder();
 		output.append("graph_args --base 1000 -l 0\n");
 		output.append("graph_vlabel pages\n");
 		output.append("graph_title KSM usage\n");
@@ -52,7 +52,7 @@ public class KSM implements Plugin_API{
 		BufferedReader pages_sharing = null;
 		BufferedReader pages_unshared = null;
 		BufferedReader pages_volatile = null;
-		StringBuffer output2 = new StringBuffer();
+		StringBuilder output2 = new StringBuilder();
 		try {
 			pages_shared = new BufferedReader(new FileReader("/sys/kernel/mm/ksm/pages_shared"));
 			output2.append("pages_shared.value " + pages_shared.readLine() + "\n");

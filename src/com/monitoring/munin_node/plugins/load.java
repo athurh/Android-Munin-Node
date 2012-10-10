@@ -48,7 +48,7 @@ public class load implements Plugin_API {
 
 	@Override
 	public Void run(Handler handler) {
-		StringBuffer output = new StringBuffer();
+		StringBuilder output = new StringBuilder();
 		output.append("graph_title Load average\n");
 		output.append("graph_args --base 1000 -l 0\n");
 		output.append("graph_vlabel load\n");

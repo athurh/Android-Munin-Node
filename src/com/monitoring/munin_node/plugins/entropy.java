@@ -38,7 +38,7 @@ public class entropy implements Plugin_API {
 
 	@Override
 	public Void run(Handler handler) {
-		StringBuffer output = new StringBuffer();
+		StringBuilder output = new StringBuilder();
 		output.append("graph_title Available entropy\n");
 		output.append("graph_args --base 1000 -l 0\n");
 		output.append("graph_vlabel entropy (bytes)\n");

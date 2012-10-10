@@ -52,7 +52,7 @@ public class Memory implements Plugin_API{
 					in.close();
 			} catch (IOException e) {}
 		}
-		StringBuffer output = new StringBuffer();
+		StringBuilder output = new StringBuilder();
 
 		output.append("graph_args --base 1024 -l 0 --upper-limit "+meminfo.get("MemTotal")+"\n");
 		output.append("graph_vlabel Bytes\ngraph_title Memory usage\ngraph_category system\ngraph_info This graph shows what the machine uses memory for.\n");
@@ -112,7 +112,7 @@ public class Memory implements Plugin_API{
 		if (meminfo.containsKey("Inact_clean")) {
 			output.append("inact_clean.label inactive_clean\ninact_clean.draw LINE1\ninact_clean.info Memory not currently used.\n");
 		}
-		StringBuffer output2 = new StringBuffer();
+		StringBuilder output2 = new StringBuilder();
 
 		if (meminfo.containsKey("Slab")){
 			output2.append("slab.value "+meminfo.get("Slab")+"\n");
