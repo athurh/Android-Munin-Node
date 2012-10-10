@@ -3,7 +3,7 @@ import com.monitoring.munin_node.plugins.*;
 
 public class PluginFactory {
 	public static Plugin_API getPlugin(String classname){
-		Class newClass = null;
+		Class<?> newClass = null;
 		Plugin_API newInstance = null;
 		try{
 			newClass = Class.forName(classname);
