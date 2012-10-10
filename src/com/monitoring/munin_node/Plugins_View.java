@@ -1,4 +1,3 @@
-
 package com.monitoring.munin_node;
 
 import android.app.ExpandableListActivity;
@@ -22,8 +21,6 @@ import android.widget.Toast;
 
 import com.monitoring.munin_node.plugin_api.LoadPlugins;
 
-//import com.monitoring.munin_node.android.apis.R;
-
 /**
  * Demonstrates expandable lists using a custom {@link ExpandableListAdapter}
  * from {@link BaseExpandableListAdapter}.
@@ -31,7 +28,7 @@ import com.monitoring.munin_node.plugin_api.LoadPlugins;
 public class Plugins_View extends ExpandableListActivity {
 
     ExpandableListAdapter mAdapter;
-    
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,12 +41,6 @@ public class Plugins_View extends ExpandableListActivity {
         setListAdapter(mAdapter);
         registerForContextMenu(getExpandableListView());
 
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        menu.setHeaderTitle("Sample menu");
-        menu.add(0, 0, 0, "Sample Action");
     }
 
     @Override
