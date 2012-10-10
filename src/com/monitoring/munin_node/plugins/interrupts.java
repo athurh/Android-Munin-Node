@@ -55,17 +55,21 @@ public class interrupts implements Plugin_API {
 		output.append("ctx.max 100000\n");
 		output.append("intr.min 0\n");
 		output.append("ctx.min 0");
+		BufferedReader in = null;
 		StringBuffer statbuffer = new StringBuffer();
-
 		try {
-			BufferedReader in = new BufferedReader(new FileReader("/proc/stat"));
+			in = new BufferedReader(new FileReader("/proc/stat"));
 			String str;
 			while ((str = in.readLine()) != null) {
-				statbuffer.append(str+"\n");						
+				statbuffer.append(str+"\n");
 			}
-			in.close();
+		} catch (IOException e) {
+		} finally {
+			try {
+				if (in != null)
+					in.close();
+			} catch (IOException e) {}
 		}
-		catch (IOException e) {}
 		final Pattern intr_pattern = Pattern.compile("intr[\\s]+([\\d]+).*ctxt[\\s]+([\\d]+).*", Pattern.DOTALL);
 		Matcher intr_matcher = intr_pattern.matcher(statbuffer.toString());
 		intr_matcher.find();

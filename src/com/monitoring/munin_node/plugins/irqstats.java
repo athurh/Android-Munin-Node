@@ -44,8 +44,9 @@ public class irqstats implements Plugin_API {
 
 	@Override
 	public Void run(Handler handler) {
+		BufferedReader in = null;
 		try {
-			BufferedReader in = new BufferedReader(new FileReader("/proc/interrupts"));
+			in = new BufferedReader(new FileReader("/proc/interrupts"));
 			String str;
 			str = in.readLine();
 			Pattern cpu_pattern = Pattern.compile("CPU\\d+");
@@ -72,9 +73,13 @@ public class irqstats implements Plugin_API {
 					irqinfo.put(line_matcher.group(1), temp);
 				}
 			}
-			in.close();
+		} catch (IOException e) {
+		} finally {
+			try {
+				if (in != null)
+					in.close();
+			} catch (IOException e) {}
 		}
-		catch (IOException e) {}
 		StringBuffer output = new StringBuffer();
 		output.append("graph_title Individual interrupts\n");
 		output.append("graph_args --base 1000 -l 0\ngraph_vlabel interrupts / ${graph_period}\ngraph_category system\n");

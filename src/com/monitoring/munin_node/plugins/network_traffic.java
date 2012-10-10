@@ -60,9 +60,8 @@ public class network_traffic implements Plugin_API {
 		errorconfig.append("graph_vlabel packets in (-) / out (+) per ${graph_period}\n");
 		errorconfig.append("graph_category network\n");
 		errorconfig.append("graph_info This graph shows the amount of errors on the network interfaces.\n");
-		Pattern network_pattern = Pattern.compile("([\\w\\d]+):\\s+([\\d]+)\\s+[\\d]+\\s+([\\d]+)\\s+[\\d]+\\s+\\s+[\\d]+\\s+[\\d]+\\s+[\\d]+\\s+[\\d]+\\s+([\\d]+)\\s+[\\d]+\\s+([\\d]+)\\s+");
-		
 		BufferedReader in = null;
+		Pattern network_pattern = Pattern.compile("([\\w\\d]+):\\s+([\\d]+)\\s+[\\d]+\\s+([\\d]+)\\s+[\\d]+\\s+\\s+[\\d]+\\s+[\\d]+\\s+[\\d]+\\s+[\\d]+\\s+([\\d]+)\\s+[\\d]+\\s+([\\d]+)\\s+");
 		try {
 			in = new BufferedReader(new FileReader("/proc/net/dev"));
 			String str;
@@ -98,10 +97,14 @@ public class network_traffic implements Plugin_API {
 					}
 			}
 		} catch (FileNotFoundException e) {
-			
 		} catch (IOException e) {
-			
+		} finally {
+			try {
+				if (in != null)
+					in.close();
+			} catch (IOException e) {}
 		}
+
 		Bundle bundle = new Bundle();
 		bundle.putString("name", this.getName());
 		//bundle.putString("config", transconfig.toString());

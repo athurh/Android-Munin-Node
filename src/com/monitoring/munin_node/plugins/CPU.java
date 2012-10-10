@@ -33,13 +33,18 @@ public class CPU implements Plugin_API{
 	}
 	@Override
 	public Void run(Handler handler) {
+		BufferedReader in = null;
 		String cpu = null;
 		try {
-			BufferedReader in = new BufferedReader(new FileReader("/proc/stat"));
+			in = new BufferedReader(new FileReader("/proc/stat"));
 			cpu = in.readLine();
-			in.close();
+		} catch (IOException e) {
+		} finally {
+			try {
+				if (in != null)
+					in.close();
+			} catch (IOException e) {}
 		}
-		catch (IOException e) {}
 		Pattern extinfo_regex = Pattern.compile("^cpu +[0-9]+ +[0-9]+ +[0-9]+ +[0-9]+ +[0-9]+ +[0-9]+ +[0-9]+");
 		Matcher match1 = extinfo_regex.matcher(cpu);
 		boolean extinfo = false;

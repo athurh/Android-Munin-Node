@@ -34,19 +34,24 @@ public class Memory implements Plugin_API{
 	}
 	@Override
 	public Void run(Handler handler) {
+		BufferedReader in = null;
 		Map<String, String> meminfo = new HashMap<String, String>();
 		Pattern meminfo_regex = Pattern.compile("([:\\s]+)");
 		try {
-			BufferedReader in = new BufferedReader(new FileReader("/proc/meminfo"));
+			in = new BufferedReader(new FileReader("/proc/meminfo"));
 			String str;
 			while ((str = in.readLine()) != null) {
 				String[] items = meminfo_regex.split(str);
 				Long data = Long.parseLong(items[1])*1024;
 				meminfo.put(items[0], data.toString());
 			}
-			in.close();
+		} catch (IOException e) {
+		} finally {
+			try {
+				if (in != null)
+					in.close();
+			} catch (IOException e) {}
 		}
-		catch (IOException e) {}
 		StringBuffer output = new StringBuffer();
 
 		output.append("graph_args --base 1024 -l 0 --upper-limit "+meminfo.get("MemTotal")+"\n");

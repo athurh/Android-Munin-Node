@@ -53,19 +53,23 @@ public class open_inodes implements Plugin_API {
 		String result = null;
 		try {
 			in = new BufferedReader(new FileReader("/proc/sys/fs/inode-nr"));
-		} catch (FileNotFoundException e) {
-			result = "used.value U";
-		}
-		try {
 			String inode_nr = in.readLine();
 			Pattern split_regex = Pattern.compile("\\s+");
 			String[] items = split_regex.split(inode_nr);
 			Long max = Long.parseLong(items[0]);
 			Long used = max-Long.parseLong(items[1]);
 			result = "used.value "+used.toString()+"\nmax.value "+max.toString();
+		} catch (FileNotFoundException e) {
+			result = "used.value U";
 		} catch (IOException e) {
 			result = "used.value U";
+		} finally {
+			try {
+				if (in != null)
+					in.close();
+			} catch (IOException e) {}
 		}
+
 		Bundle bundle = new Bundle();
 		bundle.putString("name", this.getName());
 		bundle.putString("config", output.toString());

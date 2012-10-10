@@ -56,17 +56,21 @@ public class forks implements Plugin_API {
 		output.append("forks.min 0\n");
 		output.append("forks.max 100000\n");
 		output.append("forks.info The number of forks per second.");
+		BufferedReader in = null;
 		StringBuffer statbuffer = new StringBuffer();
-
 		try {
-			BufferedReader in = new BufferedReader(new FileReader("/proc/stat"));
+			in = new BufferedReader(new FileReader("/proc/stat"));
 			String str;
 			while ((str = in.readLine()) != null) {
-				statbuffer.append(str+"\n");						
+				statbuffer.append(str+"\n");
 			}
-			in.close();
+		} catch (IOException e) {
+		} finally {
+			try {
+				if (in != null)
+					in.close();
+			} catch (IOException e) {}
 		}
-		catch (IOException e) {}
 		Pattern proccesses_pattern = Pattern.compile("processes[\\s]+([\\d]+).*", Pattern.DOTALL);
 		Matcher proccesses_matcher = proccesses_pattern.matcher(statbuffer.toString());
 		proccesses_matcher.find();

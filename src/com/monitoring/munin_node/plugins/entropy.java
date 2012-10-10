@@ -51,14 +51,16 @@ public class entropy implements Plugin_API {
 		String entropy = "";
 		try {
 			in = new BufferedReader(new FileReader("/proc/sys/kernel/random/entropy_avail"));
+			entropy = in.readLine();
 		} catch (FileNotFoundException e) {
 			entropy = "U";
-		}
-		
-		try {
-			entropy = in.readLine();
 		} catch (IOException e) {
 			entropy = "U";
+		} finally {
+			try {
+				if (in != null)
+					in.close();
+			} catch (IOException e) {}
 		}
 		Bundle bundle = new Bundle();
 		bundle.putString("name", this.getName());

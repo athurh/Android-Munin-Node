@@ -57,13 +57,19 @@ public class load implements Plugin_API {
 		output.append("load.label load\n");
 		output.append("graph_info The load average of the machine describes how many processes are in the run-queue (scheduled to run immediately).\n");
 		output.append("load.info 5 minute load average");
+		BufferedReader in = null;
 		String load = null;
 		try {
-			BufferedReader in = new BufferedReader(new FileReader("/proc/loadavg"));
+			in = new BufferedReader(new FileReader("/proc/loadavg"));
 			load = in.readLine();
-			in.close();
+		} catch (IOException e) {
+			load = "U";
+		} finally {
+			try {
+				if (in != null)
+					in.close();
+			} catch (IOException e) {}
 		}
-		catch (IOException e) {}
 		Pattern split_regex = Pattern.compile("\\s+");
 		String[] items = split_regex.split(load);
 		Bundle bundle = new Bundle();

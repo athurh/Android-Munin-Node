@@ -83,6 +83,11 @@ public class fw_packets implements Plugin_API {
 		} catch (IOException e) {
 			received = "U";
 			forwarded = "U";
+		} finally {
+			try {
+				if (in != null)
+					in.close();
+			} catch (IOException e) {}
 		}
 		Bundle bundle = new Bundle();
 		bundle.putString("name", this.getName());

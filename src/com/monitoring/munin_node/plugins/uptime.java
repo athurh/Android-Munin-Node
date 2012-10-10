@@ -32,13 +32,19 @@ public class uptime implements Plugin_API{
 	}
 	@Override
 	public Void run(Handler handler) {
+		BufferedReader in = null;
 		String uptimestring = null;
 		try {
-			BufferedReader in = new BufferedReader(new FileReader("/proc/uptime"));
+			in = new BufferedReader(new FileReader("/proc/uptime"));
 			uptimestring = in.readLine();
-			in.close();
+		} catch (IOException e) {
+			uptimestring = "U";
+		} finally {
+			try {
+				if (in != null)
+					in.close();
+			} catch (IOException e) {}
 		}
-		catch (IOException e) {}
 		Pattern split_regex = Pattern.compile("\\s+");
 		String[] items = split_regex.split(uptimestring.toString());
 		Float uptime = Float.parseFloat(items[0])/86400;
