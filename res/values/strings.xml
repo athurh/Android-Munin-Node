@@ -8,7 +8,14 @@
         <item>15</item>
     </string-array>
     <string name="time_prompt">In Minutes</string>
-	<string name="munin_service_started">Munin Service Started</string>
-	<string name="munin_service_stopped">Munin Service Stopped</string>
-	    
+    <string name="munin_service_started">Munin Service Started</string>
+    <string name="munin_service_stopped">Munin Service Stopped</string>
+    <string name="server_text">Server:</string>
+    <string name="server_wifi_text">Server (on WiFi):</string>
+    <string name="wifi_ssid_text">WiFi SSID:</string>
+    <string name="update_time_text">Update interval (minutes)</string>
+    <string name="save_text">Save</string>
+    <string name="start_on_boot_text">Start service on boot</string>
+    <string name="notification_text">Show notification</string>
+    <string name="android_id_text">Android ID:</string>
 </resources>

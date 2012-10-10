@@ -75,13 +75,13 @@ public class Plugins_View extends ExpandableListActivity {
         // Sample data set.  children[i] contains the children (String[]) for groups[i].
         private String[] groups = {};
         private String[][] children = {{}};
-        	
+
         public MyExpandableListAdapter(String[] Groups, String[][] Children){
-        	groups = Groups;
-        	children = Children;
+            groups = Groups;
+            children = Children;
         }
         public Object getChild(int groupPosition, int childPosition) {
-        	return children[groupPosition][childPosition];
+            return children[groupPosition][childPosition];
         }
 
         public long getChildId(int groupPosition, int childPosition) {
@@ -95,45 +95,39 @@ public class Plugins_View extends ExpandableListActivity {
         public TextView getGenericView() {
             // Layout parameters for the ExpandableListView
             AbsListView.LayoutParams lp = new AbsListView.LayoutParams(
-                    ViewGroup.LayoutParams.FILL_PARENT, 64);
+                    ViewGroup.LayoutParams.MATCH_PARENT, 72);
 
             TextView textView = new TextView(Plugins_View.this);
             textView.setLayoutParams(lp);
             // Center the text vertically
             textView.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER);
-            // Set the text starting position
-            textView.setPadding(36, 0, 0, 0);
             return textView;
         }
 
         public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
             AbsListView.LayoutParams lp = new AbsListView.LayoutParams(
-                    ViewGroup.LayoutParams.FILL_PARENT, 64);
+                    ViewGroup.LayoutParams.MATCH_PARENT, 72);
 
             CheckBox checkBox = new CheckBox(Plugins_View.this);
             checkBox.setLayoutParams(lp);
-            // Center the text vertically
-            checkBox.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER);
-            // Set the text starting position
             checkBox.setOnClickListener(new OnClickListener(){
-            	public void onClick(View v){
+                public void onClick(View v){
                     if (((CheckBox) v).isChecked()) {
-                    	SharedPreferences settings = getSharedPreferences("Munin_Node", 0);
+                        SharedPreferences settings = getSharedPreferences("Munin_Node", 0);
                         SharedPreferences.Editor editor = settings.edit();
                         editor.putBoolean(((CheckBox) v).getText().toString(), true);
                         editor.commit();
                     } else {
-                    	SharedPreferences settings = getSharedPreferences("Munin_Node", 0);
+                        SharedPreferences settings = getSharedPreferences("Munin_Node", 0);
                         SharedPreferences.Editor editor = settings.edit();
                         editor.putBoolean(((CheckBox) v).getText().toString(), false);
                         editor.commit();
                     }
-            	}
+                }
             });
-            checkBox.setPadding(36, 0, 0, 0);
             checkBox.setText(getChild(groupPosition, childPosition).toString());
-        	SharedPreferences settings = getSharedPreferences("Munin_Node", 0);
-        	checkBox.setChecked(settings.getBoolean(getChild(groupPosition, childPosition).toString(), true));
+            SharedPreferences settings = getSharedPreferences("Munin_Node", 0);
+            checkBox.setChecked(settings.getBoolean(getChild(groupPosition, childPosition).toString(), true));
             return checkBox;
         }
 
