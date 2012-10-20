@@ -35,6 +35,10 @@ public class munin_service extends Service{
     private static final String TAG = "MuninNodeService";
     final int MUNIN_NOTIFICATION = 1;
     List<Plugin_API> plugin_objects;
+    long pluginsTime = 0;
+    long startPluginsTime = 0;
+    long startUploadTime = 0;
+
     @Override
     public void onDestroy() {
 		String ns = Context.NOTIFICATION_SERVICE;
@@ -44,23 +48,29 @@ public class munin_service extends Service{
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+		final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 		final PowerManager.WakeLock wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Munin Wake Lock");
 		wakeLock.acquire();
-		long when = System.currentTimeMillis();
-        final SharedPreferences settings = this.getSharedPreferences("Munin_Node", 0);
-        final Editor editor = settings.edit();
-        editor.putLong("new_start_time", when);
-        editor.commit();
-
-        final NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		Notification notification = new Notification(R.drawable.notification, "Munin Node Started", when);
-		Context context = getApplicationContext();
-		if (settings.getBoolean("notification", false) == true) {
+		final long startTime = System.currentTimeMillis();
+		Log.d(TAG, "Service started");
+		final ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+		final NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+		final WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
+		final WifiInfo mWifiInfo = wifiManager.getConnectionInfo();
+		final boolean mWifiConnected = mWifi.isConnected();
+		final String mWifiSSID = mWifiInfo.getSSID();
+		final SharedPreferences settings = this.getSharedPreferences("Munin_Node", 0);
+		final Editor editor = settings.edit();
+		final String mSSID = settings.getString("ssid", "");
+		final NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		final Notification mNotification = new Notification(R.drawable.notification, "Munin Node Started", startTime);
+		final boolean mNotificationCheckOut = settings.getBoolean("notification", false);
+		final Context context = getApplicationContext();
+		if (mNotificationCheckOut) {
 			PendingIntent contentIntent = PendingIntent.getActivity(this, 0,  new Intent(this, munin_node.class), 0);
-			notification.setLatestEventInfo(context, "Munin Node", "Just letting you know I am running", contentIntent);
-			notification.flags |= Notification.FLAG_NO_CLEAR;
-			mNotificationManager.notify(MUNIN_NOTIFICATION, notification);
+			mNotification.setLatestEventInfo(context, "Munin Node", "Just letting you know I am running", contentIntent);
+			mNotification.flags |= Notification.FLAG_NO_CLEAR;
+			mNotificationManager.notify(MUNIN_NOTIFICATION, mNotification);
 		}
 		class Count{
 			int ran = 0;
@@ -92,124 +102,91 @@ public class munin_service extends Service{
 			public void handleMessage(Message msg){
 				super.handleMessage(msg);
 				if(msg.what == 42){
-					ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-					NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-					WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
-					WifiInfo mWifiInfo = wifiManager.getConnectionInfo();
-					final Boolean mWifiConnected = mWifi.isConnected();
-					final String mWifiSSID = mWifiInfo.getSSID();
-					final String ssid = settings.getString("ssid", "");
-					Bundle bundle = (Bundle)msg.obj;
-					Plugins.Plugin.Builder plugin = Plugins.Plugin.newBuilder();
+					final Bundle bundle = (Bundle)msg.obj;
+					final Plugins.Plugin.Builder plugin = Plugins.Plugin.newBuilder();
 					plugin.setName(bundle.getString("name")).setConfig(bundle.getString("config")).setUpdate(bundle.getString("update"));
 					plugins.addPlugin(plugin);
 					count.doneincrement();
 					if(count.Done()){
 						count.Reset();
+						pluginsTime = System.currentTimeMillis() - startPluginsTime;
 						ByteArrayOutputStream out = new ByteArrayOutputStream();
 						GZIPOutputStream gzipped = null;
 						try {
 							gzipped = new GZIPOutputStream(out);
 							plugins.build().writeTo(gzipped);
-							gzipped.close();
-							gzipped = null;
-							plugins.clear();
 						} catch (IOException e) {
-							Log.w(TAG, "I/O error");
+							Log.w(TAG, e);
+						} finally {
+							try {
+								if (gzipped != null) {
+									gzipped.close();
+									plugins.clear();
+								}
+							} catch (IOException e) {}
 						}
-						editor.putLong("new_plugin_end_time", System.currentTimeMillis());
 						String Server;
-						if (mWifiConnected && mWifiSSID.equals(ssid)) {
+						if (mWifiConnected && mWifiSSID.equals(mSSID)) {
 							Server = settings.getString("ServerW", "");
 						} else {
 							Server = settings.getString("Server", "");
 						}
-						Log.d(TAG, "uploading to " + Server);
+						Log.d(TAG, "Uploading data to " + Server);
 						Server = Server+Secure.getString(getBaseContext().getContentResolver(), Secure.ANDROID_ID);
-						editor.putLong("new_upload_start_time", System.currentTimeMillis()).commit();
+						startUploadTime = System.currentTimeMillis();
 						new UploadURL(this,Server,out).start();
 						try {
-							out.close();
-							out = null;
+							if (out != null) {
+								out.close();
+							}
 						} catch (IOException e) {
-							Log.w(TAG, "I/O error");
+							Log.w(TAG, e);
 						}
 					}
 				}
 				else if (msg.what == 43){
-					editor.putLong("new_upload_end_time", System.currentTimeMillis()).commit();
-					Log.d(TAG, "Upload finished");
-					mNotificationManager.cancel(MUNIN_NOTIFICATION);//Cancel Notification that the "service" is running
-					editor.putLong("end_time", System.currentTimeMillis()).commit();
-					System.gc();
+					final long uploadTime = System.currentTimeMillis() - startUploadTime;
+					if (mNotificationCheckOut) {
+						mNotificationManager.cancel(MUNIN_NOTIFICATION);
+					}
+					final long serviceTime = System.currentTimeMillis() - startTime;
+					editor.putLong("plugins_time", pluginsTime);
+					editor.putLong("upload_time", uploadTime);
+					editor.putLong("service_time", serviceTime);
+					editor.commit();
+					Log.d(TAG, "Service finished");
 					wakeLock.release();
 				}
 			}
 		};
-        LoadPlugins loadplugins = new LoadPlugins();
-        List<String> plugin_list = loadplugins.getPluginList(context);
-        /*class plugin_thread extends Thread{
-        	Context Context = null;
-        	String p = null;
-        	public plugin_thread(Context newcontext, String newp){
-        		Context = new ContextWrapper(newcontext);
-        		p = newp;
-        	}
-           	@Override
-        	public void run(){
-           		SharedPreferences settings = Context.getSharedPreferences("Munin_Node", 0);
-        		Plugin_API plugin = (Plugin_API)PluginFactory.getPlugin(p);
-        		Boolean enabled = settings.getBoolean(plugin.getName(), true);
-        		if(enabled){
-        			if(plugin.needsContext()){
-        				plugin.setContext(Context);
-        			}
-        			plugin.run(service_Handler);
-        		}
-        		else{
-        			Bundle bundle = new Bundle();
-        			bundle.putString("name", "");
-        			bundle.putString("config", "");
-        			bundle.putString("update", "");
-        			Message msg = Message.obtain(service_Handler, 42, bundle);
-    				service_Handler.sendMessage(msg);
-        		}
-        		return;
-        	}
-        }*/
-        editor.putLong("new_plugin_start_time", System.currentTimeMillis());
-        editor.commit();
-        if (plugin_objects == null){
-        	plugin_objects = new ArrayList<Plugin_API>();
-        	for (String p :plugin_list){
-        		Plugin_API plugin = (Plugin_API)PluginFactory.getPlugin(p);
-        		Boolean enabled = settings.getBoolean(plugin.getName(), true);
-        		if(plugin.needsContext()){
-        			plugin.setContext(this);
-        		}
-        		if(enabled){
-        			count.ranincrement();
-        			plugin.run(service_Handler);
-        		}
-        		plugin_objects.add(plugin);
-        	}
-        }
-        else{
-        	for(Plugin_API plugin : plugin_objects){
-        		Boolean enabled = settings.getBoolean(plugin.getName(), true);
-        		if(enabled){
-        			count.ranincrement();
-        			plugin.run(service_Handler);
-        		}
-        	}
-        }
-        /*for(final String p : plugin_list){
-        	plugin_thread thread = new plugin_thread(this,p);
-        	thread.setDaemon(true);
-        	thread.setName(p);
-        	thread.start();
-        	count.ranincrement();
-        }*/
+		LoadPlugins loadplugins = new LoadPlugins();
+		List<String> plugin_list = loadplugins.getPluginList(context);
+		startPluginsTime = System.currentTimeMillis();
+		boolean enabled;
+		if (plugin_objects == null) {
+			Plugin_API plugin;
+			plugin_objects = new ArrayList<Plugin_API>();
+			for (String p :plugin_list){
+				plugin = (Plugin_API)PluginFactory.getPlugin(p);
+				enabled = settings.getBoolean(plugin.getName(), true);
+				if(plugin.needsContext()){
+					plugin.setContext(this);
+				}
+				if(enabled){
+					count.ranincrement();
+					plugin.run(service_Handler);
+				}
+				plugin_objects.add(plugin);
+			}
+		} else {
+			for(Plugin_API plugin : plugin_objects){
+				enabled = settings.getBoolean(plugin.getName(), true);
+				if(enabled){
+					count.ranincrement();
+					plugin.run(service_Handler);
+				}
+			}
+		}
 		return START_NOT_STICKY;
 	}
 
