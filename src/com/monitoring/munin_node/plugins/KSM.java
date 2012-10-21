@@ -12,7 +12,6 @@ import android.os.Message;
 
 import com.monitoring.munin_node.plugin_api.Plugin_API;
 
-//TODO cleanup new lines so that there are no extras throught the output.
 public class KSM implements Plugin_API{
 	public String getName(){
 		return "KSM";
@@ -23,12 +22,10 @@ public class KSM implements Plugin_API{
 
 	@Override
 	public Boolean needsContext() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 	@Override
 	public Void setContext(Context context) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	@Override
@@ -39,14 +36,11 @@ public class KSM implements Plugin_API{
 		output.append("graph_vlabel pages\n");
 		output.append("graph_title KSM usage\n");
 		output.append("graph_category system\n");
+		output.append("graph_info Memory deduplication (Kernel SamePage Merging)\n");
 		output.append("pages_shared.label shared\n");
-		output.append("pages_shared.draw LINE\n");
 		output.append("pages_sharing.label sharing\n");
-		output.append("pages_sharing.draw LINE\n");
 		output.append("pages_unshared.label unshared\n");
-		output.append("pages_unshared.draw LINE\n");
 		output.append("pages_volatile.label volatile\n");
-		output.append("pages_volatile.draw LINE");
 
 		BufferedReader pages_shared = null;
 		BufferedReader pages_sharing = null;
