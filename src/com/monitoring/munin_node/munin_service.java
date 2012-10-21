@@ -16,8 +16,8 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.wifi.WifiManager;
 import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -35,6 +35,7 @@ public class munin_service extends Service{
     private static final String TAG = "MuninNodeService";
     final int MUNIN_NOTIFICATION = 1;
     List<Plugin_API> plugin_objects;
+    boolean mConnected = false;
     long pluginsTime = 0;
     long startPluginsTime = 0;
     long startUploadTime = 0;
@@ -54,6 +55,7 @@ public class munin_service extends Service{
 		final long startTime = System.currentTimeMillis();
 		Log.d(TAG, "Service started");
 		final ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+		final NetworkInfo mNetworkInfo = connManager.getActiveNetworkInfo();
 		final NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 		final WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
 		final WifiInfo mWifiInfo = wifiManager.getConnectionInfo();
@@ -126,15 +128,16 @@ public class munin_service extends Service{
 							} catch (IOException e) {}
 						}
 						String Server;
-						if (mWifiConnected && mWifiSSID.equals(mSSID)) {
+						if (mWifiConnected && mWifiSSID != null && mWifiSSID.equals(mSSID)) {
 							Server = settings.getString("ServerW", "");
 						} else {
 							Server = settings.getString("Server", "");
 						}
 						Log.d(TAG, "Uploading data to " + Server);
 						Server = Server+Secure.getString(getBaseContext().getContentResolver(), Secure.ANDROID_ID);
+						if (mNetworkInfo != null) mConnected = mNetworkInfo.isConnected();
 						startUploadTime = System.currentTimeMillis();
-						new UploadURL(this,Server,out).start();
+						new UploadURL(this,Server,out,mConnected).start();
 						try {
 							if (out != null) {
 								out.close();
