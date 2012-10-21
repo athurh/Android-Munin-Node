@@ -13,7 +13,6 @@ import android.os.Message;
 
 import com.monitoring.munin_node.plugin_api.Plugin_API;
 
-//TODO cleanup new lines so that there are no extras throught the output. 
 public class Memory implements Plugin_API{
 	public String getName(){
 		return "Memory";
@@ -21,15 +20,13 @@ public class Memory implements Plugin_API{
 	public String getCat(){
 		return "System";
 	}
-	
+
 	@Override
 	public Boolean needsContext() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 	@Override
 	public Void setContext(Context context) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	@Override
@@ -40,9 +37,11 @@ public class Memory implements Plugin_API{
 		try {
 			in = new BufferedReader(new FileReader("/proc/meminfo"));
 			String str;
+			String[] items;
+			Long data;
 			while ((str = in.readLine()) != null) {
-				String[] items = meminfo_regex.split(str);
-				Long data = Long.parseLong(items[1])*1024;
+				items = meminfo_regex.split(str);
+				data = Long.parseLong(items[1])*1024;
 				meminfo.put(items[0], data.toString());
 			}
 		} catch (IOException e) {
