@@ -24,25 +24,13 @@ public class load implements Plugin_API {
 		return "System";
 	}
 
-	/*@Override
-	public String getConfig() {
-
-	}
-
-	@Override
-	public String getUpdate() {
-
-	}*/
-
 	@Override
 	public Boolean needsContext() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public Void setContext(Context context) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -63,7 +51,7 @@ public class load implements Plugin_API {
 			in = new BufferedReader(new FileReader("/proc/loadavg"));
 			load = in.readLine();
 		} catch (IOException e) {
-			load = "U";
+			load = "U U";
 		} finally {
 			try {
 				if (in != null)
