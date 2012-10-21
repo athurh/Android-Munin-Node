@@ -46,16 +46,16 @@ public class CPU implements Plugin_API{
 					in.close();
 			} catch (IOException e) {}
 		}
-		Pattern extinfo_regex = Pattern.compile("^cpu +[0-9]+ +[0-9]+ +[0-9]+ +[0-9]+ +[0-9]+ +[0-9]+ +[0-9]+");
-		Matcher match1 = extinfo_regex.matcher(cpu);
+		Pattern regex = Pattern.compile("^cpu +[0-9]+ +[0-9]+ +[0-9]+ +[0-9]+ +[0-9]+ +[0-9]+ +[0-9]+");
+		Matcher match = regex.matcher(cpu);
 		boolean extinfo = false;
-		while (match1.find()) {
+		if (match.find()) {
 			extinfo = true;
 		}
-		Pattern extextinfo_regex = Pattern.compile("^cpu +[0-9]+ +[0-9]+ +[0-9]+ +[0-9]+ +[0-9]+ +[0-9]+ +[0-9]+ +[0-9]+");
-		Matcher match2 = extextinfo_regex.matcher(cpu);
+		regex = Pattern.compile("^cpu +[0-9]+ +[0-9]+ +[0-9]+ +[0-9]+ +[0-9]+ +[0-9]+ +[0-9]+ +[0-9]+");
+		match = regex.matcher(cpu);
 		boolean extextinfo = false;
-		while (match2.find()) {
+		if (match.find()) {
 			extextinfo = true;
 		}
 		StringBuilder output = new StringBuilder();
@@ -114,14 +114,14 @@ public class CPU implements Plugin_API{
 		String[] items = split_regex.split(cpu);
 		final SharedPreferences settings = context.getSharedPreferences("Munin_Node.CPU", 0);
 		SharedPreferences.Editor editor = settings.edit();
-		Long oldUser = settings.getLong("user", 0);
-		Long oldNice = settings.getLong("nice", 0);
-		Long oldSystem = settings.getLong("system", 0);
-		Long oldIdle = settings.getLong("idle", 0);
-		Long oldIowait = settings.getLong("iowait", 0);
-		Long oldIrq = settings.getLong("irq", 0);
-		Long oldSoftirq = settings.getLong("softirq",0);
-		Long oldSteal = settings.getLong("steal", 0);
+		Long oldUser = settings.getLong("user", -1L);
+		Long oldNice = settings.getLong("nice", -1L);
+		Long oldSystem = settings.getLong("system", -1L);
+		Long oldIdle = settings.getLong("idle", -1L);
+		Long oldIowait = settings.getLong("iowait", -1L);
+		Long oldIrq = settings.getLong("irq", -1L);
+		Long oldSoftirq = settings.getLong("softirq", -1L);
+		Long oldSteal = settings.getLong("steal", -1L);
 		editor.putLong("user", Long.parseLong(items[1]));
 		editor.putLong("nice", Long.parseLong(items[2]));
 		editor.putLong("system", Long.parseLong(items[3]));
@@ -142,54 +142,54 @@ public class CPU implements Plugin_API{
 				Total = Total+(Long.parseLong(items[8])-oldSteal);
 			}
 		}
-		if (oldUser == 0) {
+		if (oldUser == -1) {
 			output2.append("user.value U\n");
 		} else {
-			Float user = new Float((100*(Long.parseLong(items[1])-oldUser))/new Float(Total));
+			Float user = new Float((100*(Long.parseLong(items[1])-oldUser)))/new Float(Total);
 			output2.append("user.value "+user.toString()+"\n");
 		}
-		if (oldNice == 0) {
+		if (oldNice == -1) {
 			output2.append("nice.value U\n");
 		} else {
-			Float nice = new Float((100*(Long.parseLong(items[2])-oldNice))/new Float(Total));
+			Float nice = new Float((100*(Long.parseLong(items[2])-oldNice)))/new Float(Total);
 			output2.append("nice.value "+nice.toString()+"\n");
 		}
-		if (oldSystem == 0) {
+		if (oldSystem == -1) {
 			output2.append("system.value U\n");
 		} else {
-			Float system = new Float((100*(Long.parseLong(items[3])-oldSystem))/new Float(Total));
+			Float system = new Float((100*(Long.parseLong(items[3])-oldSystem)))/new Float(Total);
 			output2.append("system.value "+system.toString()+"\n");
 		}
-		if (oldIdle == 0) {
+		if (oldIdle == -1) {
 			output2.append("idle.value U");
 		} else {
-			Float idle = new Float((100*(Long.parseLong(items[4])-oldIdle))/new Float(Total));
+			Float idle = new Float((100*(Long.parseLong(items[4])-oldIdle)))/new Float(Total);
 			output2.append("idle.value "+idle.toString());
 		}
 		if (extinfo == true) {
-			if (oldIowait == 0) {
+			if (oldIowait == -1) {
 				output2.append("\niowait.value U\n");
 			} else {
-				Float iowait = new Float((100*(Long.parseLong(items[5])-oldIowait))/new Float(Total));
+				Float iowait = new Float((100*(Long.parseLong(items[5])-oldIowait)))/new Float(Total);
 				output2.append("\niowait.value "+iowait.toString()+"\n");
 			}
-			if (oldIrq == 0) {
+			if (oldIrq == -1) {
 				output2.append("irq.value U\n");
 			} else {
-				Float irq = new Float((100*(Long.parseLong(items[6])-oldIrq))/new Float(Total));
+				Float irq = new Float((100*(Long.parseLong(items[6])-oldIrq)))/new Float(Total);
 				output2.append("irq.value "+irq.toString()+"\n");
 			}
-			if (oldSoftirq == 0) {
+			if (oldSoftirq == -1) {
 				output2.append("softirq.value U");
 			} else {
-				Float softirq = new Float((100*(Long.parseLong(items[7])-oldSoftirq))/new Float(Total));
+				Float softirq = new Float((100*(Long.parseLong(items[7])-oldSoftirq)))/new Float(Total);
 				output2.append("softirq.value "+softirq.toString());
 			}
 			if (extextinfo == true) {
-				if (oldSteal == 0) {
+				if (oldSteal == -1) {
 					output2.append("\nsteal.value U");
 				} else {
-					Float steal = new Float((100*(Long.parseLong(items[8])-oldSteal))/new Float(Total));
+					Float steal = new Float((100*(Long.parseLong(items[8])-oldSteal)))/new Float(Total);
 					output2.append("\nsteal.value "+steal.toString());
 				}
 			}
@@ -202,5 +202,5 @@ public class CPU implements Plugin_API{
 		handler.sendMessage(msg);
 		return null;
 	}
-	
+
 }
