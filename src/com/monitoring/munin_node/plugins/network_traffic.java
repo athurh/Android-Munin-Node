@@ -16,7 +16,7 @@ import com.monitoring.munin_node.plugin_api.Plugin_API;
 
 public class network_traffic implements Plugin_API {
 	String[] Colours = {"00CC00", "0066B3", "FF8000", "FFCC00", "330099", "990099", "CCFF00", "FF0000", "808080", "008F00",
-			"00487D", "B35A00", "B38F00", "6B006B", "8FB300", "B30000", "BEBEBE", "80FF80", "80C9FF", "FFC080", "FFE680", 
+			"00487D", "B35A00", "B38F00", "6B006B", "8FB300", "B30000", "BEBEBE", "80FF80", "80C9FF", "FFC080", "FFE680",
 			"AA80FF", "EE00CC", "FF8080", "666600", "FFBFFF", "00FFCC", "CC6699", "999900"};
 	@Override
 	public String getName() {
@@ -31,13 +31,11 @@ public class network_traffic implements Plugin_API {
 
 	@Override
 	public Boolean needsContext() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public Void setContext(Context context) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -47,7 +45,7 @@ public class network_traffic implements Plugin_API {
 		StringBuilder errorconfig = new StringBuilder();
 		StringBuilder transvalue = new StringBuilder();
 		StringBuilder errorvalue = new StringBuilder();
-		transconfig.append("graph_order down up\n"); 
+		transconfig.append("graph_order down up\n");
 		transconfig.append("graph_title Network traffic\n");
 		transconfig.append("graph_args --base 1000\n");
 		transconfig.append("graph_vlabel bits in (-) / out (+) per ${graph_period}\n");
@@ -64,18 +62,21 @@ public class network_traffic implements Plugin_API {
 		Pattern network_pattern = Pattern.compile("([\\w\\d]+):\\s+([\\d]+)\\s+[\\d]+\\s+([\\d]+)\\s+[\\d]+\\s+\\s+[\\d]+\\s+[\\d]+\\s+[\\d]+\\s+[\\d]+\\s+([\\d]+)\\s+[\\d]+\\s+([\\d]+)\\s+");
 		try {
 			in = new BufferedReader(new FileReader("/proc/net/dev"));
+			Matcher network_matcher;
 			String str;
 			Integer count = 0;
 			while ((str = in.readLine()) != null) {
-				Matcher network_matcher = network_pattern.matcher(str);
+				network_matcher = network_pattern.matcher(str);
 				if(network_matcher.find()){
 					transconfig.append(network_matcher.group(1)+"down.label "+network_matcher.group(1)+" received\n");
-					transconfig.append(network_matcher.group(1)+"down.type COUNTER\n");
+					transconfig.append(network_matcher.group(1)+"down.type DERIVE\n");
+					transconfig.append(network_matcher.group(1)+"down.min 0\n");
 					transconfig.append(network_matcher.group(1)+"down.graph yes\n");
 					transconfig.append(network_matcher.group(1)+"down.colour "+Colours[count]+"\n");
 					transconfig.append(network_matcher.group(1)+"down.cdef "+network_matcher.group(1)+"down,-8,*\n");
 					transconfig.append(network_matcher.group(1)+"up.label "+network_matcher.group(1)+" uploaded\n");
-					transconfig.append(network_matcher.group(1)+"up.type COUNTER\n");
+					transconfig.append(network_matcher.group(1)+"up.type DERIVE\n");
+					transconfig.append(network_matcher.group(1)+"up.min 0\n");
 					transconfig.append(network_matcher.group(1)+"up.colour "+Colours[count]+"\n");
 					//transconfig.append(network_matcher.group(1)+"up.negative eth0down\n");
 					transconfig.append(network_matcher.group(1)+"up.cdef "+network_matcher.group(1)+"up,8,*\n");
@@ -107,8 +108,6 @@ public class network_traffic implements Plugin_API {
 
 		Bundle bundle = new Bundle();
 		bundle.putString("name", this.getName());
-		//bundle.putString("config", transconfig.toString());
-		//bundle.putString("update", transvalue.toString());
 		bundle.putString("config", transconfig.toString()+errorconfig.toString());
 		bundle.putString("update", transvalue.toString()+"\nmultigraph Network_Errors\n"+errorvalue.toString());
 		Message msg = Message.obtain(handler, 42, bundle);
