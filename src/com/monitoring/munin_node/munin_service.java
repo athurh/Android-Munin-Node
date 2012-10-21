@@ -31,21 +31,22 @@ import com.monitoring.munin_node.plugin_api.LoadPlugins;
 import com.monitoring.munin_node.plugin_api.PluginFactory;
 import com.monitoring.munin_node.plugin_api.Plugin_API;
 
-public class munin_service extends Service{
-    private static final String TAG = "MuninNodeService";
-    final int MUNIN_NOTIFICATION = 1;
-    List<Plugin_API> plugin_objects;
-    boolean mConnected = false;
-    long pluginsTime = 0;
-    long startPluginsTime = 0;
-    long startUploadTime = 0;
+public class munin_service extends Service {
+	private static final String TAG = "MuninNodeService";
+	private static final boolean DEBUG = false;
+	final int MUNIN_NOTIFICATION = 1;
+	List<Plugin_API> plugin_objects;
+	boolean mConnected = false;
+	long pluginsTime = 0;
+	long startPluginsTime = 0;
+	long startUploadTime = 0;
 
-    @Override
-    public void onDestroy() {
+	@Override
+	public void onDestroy() {
 		String ns = Context.NOTIFICATION_SERVICE;
 		NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
 		mNotificationManager.cancel(MUNIN_NOTIFICATION);
-    }
+	}
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
@@ -53,7 +54,7 @@ public class munin_service extends Service{
 		final PowerManager.WakeLock wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Munin Wake Lock");
 		wakeLock.acquire();
 		final long startTime = System.currentTimeMillis();
-		Log.d(TAG, "Service started");
+		if (DEBUG) Log.d(TAG, "Service started");
 		final ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
 		final NetworkInfo mNetworkInfo = connManager.getActiveNetworkInfo();
 		final NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
@@ -133,7 +134,7 @@ public class munin_service extends Service{
 						} else {
 							Server = settings.getString("Server", "");
 						}
-						Log.d(TAG, "Uploading data to " + Server);
+						if (DEBUG) Log.d(TAG, "Uploading data to " + Server);
 						Server = Server+Secure.getString(getBaseContext().getContentResolver(), Secure.ANDROID_ID);
 						if (mNetworkInfo != null) mConnected = mNetworkInfo.isConnected();
 						startUploadTime = System.currentTimeMillis();
@@ -157,7 +158,7 @@ public class munin_service extends Service{
 					editor.putLong("upload_time", uploadTime);
 					editor.putLong("service_time", serviceTime);
 					editor.commit();
-					Log.d(TAG, "Service finished");
+					if (DEBUG) Log.d(TAG, "Service finished");
 					wakeLock.release();
 				}
 			}

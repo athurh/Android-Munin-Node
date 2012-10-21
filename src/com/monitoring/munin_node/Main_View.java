@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 public class Main_View extends Activity{
 	private static final String TAG = "MuninNode";
+	private static final boolean DEBUG = false;
 	public static final String PREFS_NAME = "Munin_Node";
 	public String Update_Interval = null;
 	public String Update_Interval_New = null;
@@ -57,7 +58,7 @@ public class Main_View extends Activity{
         server_text.setText(Server);
         serverw_text.setText(ServerW);
         ssid_text.setText(ssid);
-        Log.d(TAG, "server=" + Server + " server_wifi=" + ServerW + " SSID=" + ssid + " update_interval=" + Update_Interval);
+        if (DEBUG) Log.d(TAG, "server=" + Server + " server_wifi=" + ServerW + " SSID=" + ssid + " update_interval=" + Update_Interval);
         if (Update_Interval.contentEquals("5")){
         	spinner.setSelection(0, true);
         }
@@ -72,7 +73,7 @@ public class Main_View extends Activity{
         	final Handler test_handler = new Handler(){
     			@Override
     			public void handleMessage(Message msg){
-				Log.d(TAG, "Recieved message");
+				if (DEBUG) Log.d(TAG, "Recieved message");
     				super.handleMessage(msg);
     				Bundle bundle = (Bundle)msg.obj;
     				Toast toast = Toast.makeText(Main_View.this, bundle.getString("result") , Toast.LENGTH_LONG);
@@ -120,7 +121,7 @@ public class Main_View extends Activity{
 							test_value = test.Run_Test(Server);
 						}
     						String result = null;
-						Log.d(TAG, "test=" + test_value);
+						if (DEBUG) Log.d(TAG, "test=" + test_value);
     						switch(test_value){
     						case Test_Settings.OK:
     							save_settings();
@@ -173,7 +174,7 @@ public class Main_View extends Activity{
 
         public void onItemSelected(AdapterView<?> parent,View view, int pos, long id) {
         	Update_Interval_New = parent.getItemAtPosition(pos).toString();
-		Log.d(TAG, "update interval=" + Update_Interval_New);
+		if (DEBUG) Log.d(TAG, "update interval=" + Update_Interval_New);
         }
 
         public void onNothingSelected(AdapterView<?> parent) {
@@ -188,6 +189,6 @@ public class Main_View extends Activity{
         editor.putString("ssid", ssid);
         editor.putString("Update_Interval", Update_Interval_New);
         editor.commit();
-	Log.d(TAG, "server=" + Server + " server_wifi=" + ServerW + " SSID=" + ssid + " update_interval=" + Update_Interval_New);
+	if (DEBUG) Log.d(TAG, "server=" + Server + " server_wifi=" + ServerW + " SSID=" + ssid + " update_interval=" + Update_Interval_New);
     }
 }

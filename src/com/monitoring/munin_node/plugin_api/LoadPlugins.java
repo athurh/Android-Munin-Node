@@ -14,6 +14,7 @@ import android.util.Log;
 
 public class LoadPlugins {
     private static final String TAG = "MuninNodeLoadPlugins";
+    private static final boolean DEBUG = false;
     List<Plugin_API> plugins = new ArrayList<Plugin_API>();
     List<String> plugin_names = new ArrayList<String>();
     String[] catarray = {};
@@ -44,10 +45,10 @@ public class LoadPlugins {
         return plugin_names;
 	}
 	public void genCats(){
-		Log.d(TAG, "Getting categories");
+		if (DEBUG) Log.d(TAG, "Getting categories");
 		Map<String, String[]> Cats = new HashMap<String, String[]>();
 		for(Plugin_API p : plugins){
-			Log.d(TAG, "category=" + p.getCat() + " name=" + p.getName());
+			if (DEBUG) Log.d(TAG, "category=" + p.getCat() + " name=" + p.getName());
 			if(Cats.containsKey(p.getCat())){
 				String[] plugs = Cats.get(p.getCat());
 				String[] temp = new String[plugs.length+1];
@@ -72,7 +73,7 @@ public class LoadPlugins {
 			temp1[catarray.length-1] = childtemp;
 			childcatarray = temp1;
 		}
-		Log.d(TAG, "Done");
+		if (DEBUG) Log.d(TAG, "Done");
 	}
 	public String[] getCats(){
 		return catarray;
