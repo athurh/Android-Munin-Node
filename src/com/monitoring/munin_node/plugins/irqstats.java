@@ -12,12 +12,10 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 import com.monitoring.munin_node.plugin_api.Plugin_API;
 
 public class irqstats implements Plugin_API {
-	private static final String TAG = "MuninNodePlugin";
 	Map<String, String[]> irqinfo = new HashMap<String, String[]>();
 
 	@Override
@@ -32,13 +30,11 @@ public class irqstats implements Plugin_API {
 
 	@Override
 	public Boolean needsContext() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public Void setContext(Context context) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -50,9 +46,9 @@ public class irqstats implements Plugin_API {
 			String str;
 			str = in.readLine();
 			Pattern cpu_pattern = Pattern.compile("CPU\\d+");
-			Matcher cpu_matcher = cpu_pattern.matcher(str);
+			Matcher matcher = cpu_pattern.matcher(str);
 			int cpu_count = 0;
-			while (cpu_matcher.find()){
+			while (matcher.find()){
 				cpu_count++;
 			}
 			StringBuilder pattern = new StringBuilder();
@@ -63,14 +59,11 @@ public class irqstats implements Plugin_API {
 			pattern.append("([\\w\\s-:,]+)");
 			Pattern line_match = Pattern.compile(pattern.toString());
 			while ((str = in.readLine()) != null) {
-				Matcher line_matcher = line_match.matcher(str);
-				if(line_matcher.find()){
-					if(cpu_count > 1){
-						//TODO handle multiple cpus
-						Log.d(TAG, "Multiple cpus should be handled eventually");
-					}
-					String[] temp = {line_matcher.group(2),line_matcher.group(3)};
-					irqinfo.put(line_matcher.group(1), temp);
+				matcher = line_match.matcher(str);
+				if(matcher.find()){
+					// TODO get multicore data (often sleeping)
+					String[] temp = {matcher.group(2),matcher.group(cpu_count+2)};
+					irqinfo.put(matcher.group(1), temp);
 				}
 			}
 		} catch (IOException e) {
@@ -81,6 +74,7 @@ public class irqstats implements Plugin_API {
 			} catch (IOException e) {}
 		}
 		StringBuilder output = new StringBuilder();
+		StringBuilder output2 = new StringBuilder();
 		output.append("graph_title Individual interrupts\n");
 		output.append("graph_args --base 1000 -l 0\ngraph_vlabel interrupts / ${graph_period}\ngraph_category system\n");
 		//TODO Fix Graph order
@@ -89,9 +83,6 @@ public class irqstats implements Plugin_API {
 			output.append("\ni"+entry.getKey()+".info Interrupt "+entry.getKey()+", for devices(s): "+entry.getValue()[1]);
 			output.append("\ni"+entry.getKey()+".type DERIVE");
 			output.append("\ni"+entry.getKey()+".min 0\n");
-		}
-		StringBuilder output2 = new StringBuilder();
-		for (Map.Entry<String, String[]> entry : irqinfo.entrySet()) {
 			output2.append("\ni"+entry.getKey()+".value "+entry.getValue()[0]);
 		}
 		Bundle bundle = new Bundle();
