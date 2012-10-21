@@ -22,12 +22,10 @@ public class uptime implements Plugin_API{
 	}
 	@Override
 	public Boolean needsContext() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 	@Override
 	public Void setContext(Context context) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	@Override
@@ -37,6 +35,10 @@ public class uptime implements Plugin_API{
 		try {
 			in = new BufferedReader(new FileReader("/proc/uptime"));
 			uptimestring = in.readLine();
+			Pattern split_regex = Pattern.compile("\\s+");
+			String[] items = split_regex.split(uptimestring.toString());
+			Float uptime = Float.parseFloat(items[0])/86400;
+			uptimestring = uptime.toString();
 		} catch (IOException e) {
 			uptimestring = "U";
 		} finally {
@@ -45,13 +47,10 @@ public class uptime implements Plugin_API{
 					in.close();
 			} catch (IOException e) {}
 		}
-		Pattern split_regex = Pattern.compile("\\s+");
-		String[] items = split_regex.split(uptimestring.toString());
-		Float uptime = Float.parseFloat(items[0])/86400;
 		Bundle bundle = new Bundle();
 		bundle.putString("name", this.getName());
 		bundle.putString("config", output);
-		bundle.putString("update", "uptime.value "+uptime.toString());
+		bundle.putString("update", "uptime.value " + uptimestring);
 		Message msg = Message.obtain(handler, 42, bundle);
 		handler.sendMessage(msg);
 		return null;
